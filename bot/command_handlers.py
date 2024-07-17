@@ -1,7 +1,7 @@
 from aiogram import Router, F
 import asyncio
 from aiogram.types import Message
-from aiogram.filters import CommandStart, Command, StateFilter
+from aiogram.filters import CommandStart, Command
 from postgres_functions import *
 from pagination import start_foto
 from keyboards import pre_start_clava, start_inline_kb
@@ -45,15 +45,20 @@ async def before_start(message: Message):
     await prestart_ant.delete()
 
 
-@ch_router.message(Command('help'), ~StateFilter(FSM_ST.wait))
-async def process_help_command(message: Message, state: FSMContext):
-    current_state = await state.get_state()
-    await state.set_state(FSM_ST.wait)
-    att = await message.answer(text=help_text)
-    await asyncio.sleep(22)
-    await message.delete()
-    await att.delete()
-    await state.set_state(current_state)
+@ch_router.message(Command('help'))
+async def process_help_command(message: Message):
+    # current_state = await state.get_state()
+    user_id = message.from_user.id
+    if not await return_help(user_id):
+        await insert_data_in_help(user_id)
+        att = await message.answer(text=help_text)
+        await asyncio.sleep(22)
+        await message.delete()
+        await att.delete()
+        await reset_help(user_id)
+    else:
+        await message.delete()
+    # await state.set_state(current_state)
 
 
 @ch_router.message(Command('back'))

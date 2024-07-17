@@ -182,8 +182,8 @@ album_crystal_kb_4 = InlineKeyboardMarkup(
 # 4 Album Crystal
 
 crystal_2021_1 = InlineKeyboardButton(text=f'1. Sailor Moon', callback_data='Sailor')
-crystal_2021_2 = InlineKeyboardButton(text=f'1. Сериалы', callback_data='Сериалы')
-crystal_2021_3 = InlineKeyboardButton(text=f'1. Герой remix', callback_data='Герой remix')
+crystal_2021_2 = InlineKeyboardButton(text=f'2. Сериалы', callback_data='Сериалы')
+crystal_2021_3 = InlineKeyboardButton(text=f'3. Герой remix', callback_data='Герой remix')
 
 album_crystal_kb_5 = InlineKeyboardMarkup(
             inline_keyboard= [[crystal_2021_1], [crystal_2021_2], [crystal_2021_3],

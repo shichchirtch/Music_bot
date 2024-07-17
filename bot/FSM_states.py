@@ -11,4 +11,4 @@ class FSM_ST(StatesGroup):
     ubiyci = State()
     crystal = State()
     best = State()
-    wait = State()
+

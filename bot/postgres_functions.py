@@ -40,22 +40,12 @@ async def return_song(user_id):
         song = needed_data.song
         return song
 
-async def reset_msg(user_id:int):
+async def reset_song(user_id):
     async with session_marker() as session:
         query = await session.execute(select(User).filter(User.tg_us_id == user_id))
         needed_data = query.scalar()
-        print('reset_msg works')
-        needed_data.msg = ''
+        needed_data.song = 'not_repeat'
         await session.commit()
-
-async def reset_kadr(user_id:int):
-    async with session_marker() as session:
-        query = await session.execute(select(User).filter(User.tg_us_id == user_id))
-        needed_data = query.scalar()
-        print('reset_kadr works')
-        needed_data.kadr = ''
-        await session.commit()
-
 
 async def return_kadr(user_id):
     async with session_marker() as session:
@@ -66,8 +56,29 @@ async def return_kadr(user_id):
         return kadr_msg
 
 
+async def insert_data_in_help(user_id:int):
+    async with session_marker() as session:
+        query = await session.execute(select(User).filter(User.tg_us_id == user_id))
+        needed_data = query.scalar()
+        needed_data.help = 'Help'
+        await session.commit()
 
 
+async def return_help(user_id):
+    async with session_marker() as session:
+        print("Works return_kadr Func")
+        query = await session.execute(select(User).filter(User.tg_us_id == user_id))
+        needed_data = query.scalar()
+        help = needed_data.help
+        return help
+
+
+async def reset_help(user_id):
+    async with session_marker() as session:
+        query = await session.execute(select(User).filter(User.tg_us_id == user_id))
+        needed_data = query.scalar()
+        needed_data.help = ''
+        await session.commit()
 
 
 

@@ -18,8 +18,9 @@ class User(Base):
     index: Mapped[int] = mapped_column(Integer, autoincrement=True, primary_key=True)
     tg_us_id: Mapped[int] = mapped_column(BigInteger) # tg user id
     user_name: Mapped[str] = mapped_column(String(200), nullable=False)
-    song: Mapped[str] = mapped_column(String, default='', nullable=True)
+    song: Mapped[str] = mapped_column(String, default='not_repeat', nullable=True)
     kadr: Mapped[str] = mapped_column(String, default='', nullable=True)
+    help: Mapped[str] = mapped_column(String, default='', nullable=True)
 
 
 async def init_models():

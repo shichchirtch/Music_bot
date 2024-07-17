@@ -16,9 +16,10 @@ from FSM_states import FSM_ST
 cb_router = Router()
 
 
-@cb_router.callback_query(StateFilter(FSM_ST.start), START_UB_FILTER())
+@cb_router.callback_query(START_UB_FILTER())
 async def go_to_ubiyci(callback: CallbackQuery, state: FSMContext):
     await state.set_state(FSM_ST.ubiyci)
+    print('\n\n\nWe are into UB first inline button')
     user_id = callback.from_user.id
     try:
         att = await callback.message.edit_media(
@@ -35,8 +36,9 @@ async def go_to_ubiyci(callback: CallbackQuery, state: FSMContext):
     await callback.answer()
 
 
-@cb_router.callback_query(StateFilter(FSM_ST.start), START_CR_FILTER())
+@cb_router.callback_query(START_CR_FILTER())
 async def go_to_crystal(callback: CallbackQuery, state: FSMContext):
+    print('We are into CRY first inline button')
     await state.set_state(FSM_ST.crystal)
     user_id = callback.from_user.id
     try:
@@ -54,8 +56,9 @@ async def go_to_crystal(callback: CallbackQuery, state: FSMContext):
     await callback.answer()
 
 
-@cb_router.callback_query(StateFilter(FSM_ST.start), START_BEST_FILTER())
+@cb_router.callback_query(START_BEST_FILTER())
 async def go_to_best(callback: CallbackQuery, state: FSMContext):
+    print('We are into BEST first inline button')
     await state.set_state(FSM_ST.best)
     user_id = callback.from_user.id
     try:
@@ -74,8 +77,8 @@ async def go_to_best(callback: CallbackQuery, state: FSMContext):
 
 
 @cb_router.callback_query(StateFilter(FSM_ST.ubiyci), START_UB_1_FILTER())
-async def go_to_ub_1(callback: CallbackQuery):
-    print('callback.data = ', callback.data)
+async def go_to_ub_albums(callback: CallbackQuery, state:FSMContext):
+    print('\n\n\ngo_to_ub_albums')
     user_id = callback.from_user.id
     callback_data_dict = {'2013-U': (album_ubiyci_kb_1, ub_1), '2014-U': (album_ubiyci_kb_2, ub_2),
                           '2014-Uer': (album_ubiyci_kb_3, ub_3), '2017-U': (album_ubiyci_kb_4, ub_4),
@@ -93,23 +96,25 @@ async def go_to_ub_1(callback: CallbackQuery):
             await insert_data_in_kadr(user_id, json_att)
 
     except TelegramBadRequest:
-        print('go to best into Exeption')
+        print('go to ub_albums into Exeption')
     await callback.answer()
 
 
-@cb_router.callback_query(StateFilter(FSM_ST.ubiyci), UB_FILTER(), ~StateFilter(FSM_ST.wait))
+@cb_router.callback_query(StateFilter(FSM_ST.ubiyci), UB_FILTER())
 async def go_INTO_ub(callback: CallbackQuery, state: FSMContext):
+    print('\n\n WORK THIS go_INTO_ub')
     user_id = callback.from_user.id
     song = callback.data
     if song != 'Назад':
         previous_song = await return_song(user_id)
         if song == previous_song:
-            await state.set_state(FSM_ST.wait)
             await asyncio.sleep(20)
-            await state.set_state(FSM_ST.ubiyci)
-        await callback.message.answer_audio(sound_ub_dict[song])
-        await insert_data_in_song(user_id, song)
+            await reset_song(user_id)
+        else:
+            await callback.message.answer_audio(sound_ub_dict[song])
+            await insert_data_in_song(user_id, song)
     else:
+        print('HHHHHHHHHHHier')
         ubiyci_foto_atw = await callback.message.answer_photo(ubiycy_foto,
                                                               reply_markup=albums_ubiyci_kb)
 
@@ -122,7 +127,7 @@ async def go_INTO_ub(callback: CallbackQuery, state: FSMContext):
 
 
 @cb_router.callback_query(StateFilter(FSM_ST.crystal), START_CRY_1_FILTER())
-async def go_to_crystal_albums(callback: CallbackQuery, ):
+async def go_to_crystal_albums(callback: CallbackQuery, state:FSMContext ):
     print('callback.data = ', callback.data)
     user_id = callback.from_user.id
     callback_data_cry_dict = {'2016-C': (album_crystal_kb_1, cr_1),
@@ -146,18 +151,18 @@ async def go_to_crystal_albums(callback: CallbackQuery, ):
     await callback.answer()
 
 
-@cb_router.callback_query(StateFilter(FSM_ST.crystal), CRY_FILTER(), ~StateFilter(FSM_ST.wait))
+@cb_router.callback_query(StateFilter(FSM_ST.crystal), CRY_FILTER())
 async def go_INTO_cry(callback: CallbackQuery, state: FSMContext):
     user_id = callback.from_user.id
     song = callback.data
     if song != 'Назад':
         previous_song = await return_song(user_id)
         if song == previous_song:
-            await state.set_state(FSM_ST.wait)
             await asyncio.sleep(20)
-            await state.set_state(FSM_ST.crystal)
-        await callback.message.answer_audio(sound_cry_dict[song])
-        await insert_data_in_song(user_id, song)
+            await reset_song(user_id)
+        else:
+            await callback.message.answer_audio(sound_cry_dict[song])
+            await insert_data_in_song(user_id, song)
     else:
         ubiyci_foto_atw = await callback.message.answer_photo(cristal_foto,
                                                               reply_markup=albums_crystal_kb)
@@ -171,8 +176,9 @@ async def go_INTO_cry(callback: CallbackQuery, state: FSMContext):
 
 
 @cb_router.callback_query(StateFilter(FSM_ST.best), START_BEST_1_FILTER())
-async def go_to_best(callback: CallbackQuery, ):
+async def go_to_best(callback: CallbackQuery, state:FSMContext ):
     print('callback.data = ', callback.data)
+    await state.set_state(FSM_ST.best)
     user_id = callback.from_user.id
     callback_data_best_dict = {'UB': (ub_best_list_kb, lexa),
                                'CRY': (cr_best_list_kb, vika)}
@@ -191,7 +197,7 @@ async def go_to_best(callback: CallbackQuery, ):
     await callback.answer()
 
 
-@cb_router.callback_query(StateFilter(FSM_ST.best), BEST_FILTER(), ~StateFilter(FSM_ST.wait))
+@cb_router.callback_query(StateFilter(FSM_ST.best), BEST_FILTER())
 async def go_INTO_best(callback: CallbackQuery, state: FSMContext):
     user_id = callback.from_user.id
     song = callback.data
@@ -199,11 +205,12 @@ async def go_INTO_best(callback: CallbackQuery, state: FSMContext):
     if song != 'Назад':
         previous_song = await return_song(user_id)
         if song == previous_song:
-            await state.set_state(FSM_ST.wait)
-            await asyncio.sleep(200)
-            await state.set_state(FSM_ST.best)
-        await callback.message.answer_audio(izb_dict[song])
-        await insert_data_in_song(user_id, song)
+            print("Hier into Best")
+            await asyncio.sleep(20)
+            await reset_song(user_id)
+        else:
+            await callback.message.answer_audio(izb_dict[song])
+            await insert_data_in_song(user_id, song)
     else:
         ubiyci_foto_atw = await callback.message.answer_photo(best_foto,
                                                               reply_markup=best_kb)
