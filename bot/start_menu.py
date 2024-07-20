@@ -7,7 +7,7 @@ async def set_main_menu(bot):
                    description='К выбору группы'),
 
         BotCommand(command='/help',
-                   description='Bot commands')]
+                   description='О работе бота')]
 
     await bot.set_my_commands(main_menu_commands)
 
