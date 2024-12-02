@@ -66,12 +66,15 @@ async def process_back_command(message: Message, state: FSMContext):
     print('INTO Back')
     await state.set_state(FSM_ST.start)
     user_id = message.from_user.id
-    # data = await return_kadr(user_id)
-    # if data != '':
-    #     return_to_message = Message(**json.loads(data))
-    #     msg = Message.model_validate(return_to_message).as_(bot)
-    #     await message.delete()
-    #     await msg.delete()
+    data = await return_kadr(user_id)
+    if data != '':
+        try:
+            return_to_message = Message(**json.loads(data))
+            msg = Message.model_validate(return_to_message).as_(bot)
+            await message.delete()
+            await msg.delete()
+        except Exception:
+            pass
     first_foto_atw = await message.answer_photo(start_foto,
                                                 reply_markup=start_inline_kb)
     js_first_foto_atw = first_foto_atw.model_dump_json(exclude_none=True)
