@@ -25,21 +25,21 @@ async def insert_data_in_kadr(user_id:int, kadr_data:str):
         needed_data = query.scalar()
         needed_data.kadr = kadr_data
         await session.commit()
-
+# Переписать значение в БД
 async def insert_data_in_song(user_id:int, song:str):
     async with session_marker() as session:
         query = await session.execute(select(User).filter(User.tg_us_id == user_id))
         needed_data = query.scalar()
         needed_data.song = song
         await session.commit()
-
+# Вернуть данные из бд
 async def return_song(user_id):
     async with session_marker() as session:
         query = await session.execute(select(User).filter(User.tg_us_id == user_id))
         needed_data = query.scalar()
         song = needed_data.song
         return song
-
+# Откатить значение колонки к стартовому
 async def reset_song(user_id):
     async with session_marker() as session:
         query = await session.execute(select(User).filter(User.tg_us_id == user_id))
